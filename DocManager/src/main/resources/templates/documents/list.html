@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список документов</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-3">
+<h2>Документы</h2>
+<a th:href="@{/documents/new}" class="btn btn-primary mb-2">Создать новый документ</a>
+
+<table class="table table-bordered align-middle">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Тип</th>
+        <th>Дата выдачи</th>
+        <th>Дата окончания</th>
+        <th>Группа</th>
+        <th>Статус</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="doc : ${documents}">
+        <td th:text="${doc.id}"></td>
+        <td th:text="${doc.name}"></td>
+        <td th:text="${doc.type.displayName}"></td>
+        <td th:text="${doc.issueDate}"></td>
+        <td th:text="${doc.expirationDate}"></td>
+
+        <!-- Квадрат с цветом группы -->
+        <td>
+            <span th:style="'display:inline-block;width:20px;height:20px;border:1px solid #000;background-color:' + ${doc.group.color}"></span>
+            <span th:text="${doc.group.name}" class="ms-1"></span>
+        </td>
+
+        <!-- Статус с уведомлением -->
+        <td>
+                    <span th:with="daysLeft=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), doc.expirationDate)}">
+                        <span th:if="${daysLeft < 0}" class="text-danger fw-bold">&#9888; Срок истёк!</span>
+                        <span th:if="${daysLeft >= 0 and daysLeft <= doc.type.warningDays}" class="text-danger fw-bold">
+                            &#9888; Осталось <span th:text="${daysLeft}"></span> дней
+                        </span>
+                        <span th:if="${daysLeft > doc.type.warningDays}" class="text-success fw-bold">✅ OK</span>
+                    </span>
+        </td>
+
+        <td>
+            <a th:href="@{/documents/edit/{id}(id=${doc.id})}" class="btn btn-sm btn-warning">Редактировать</a>
+            <a th:href="@{/documents/delete/{id}(id=${doc.id})}" class="btn btn-sm btn-danger">Удалить</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{/groups}" class="btn btn-secondary">К группам</a>
+<a th:href="@{/report}" class="btn btn-info">Отчет</a>
+</body>
+</html>
+
+
+
+
+

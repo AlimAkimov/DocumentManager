@@ -1,0 +1,47 @@
+package com.spring.DocManager.service;
+
+import com.spring.DocManager.model.Document;
+import com.spring.DocManager.model.DocumentType;
+import com.spring.DocManager.repository.DocumentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class DocumentService {
+    @Autowired
+    private DocumentRepository documentRepository;
+
+    public List<Document> findAll() {
+        return documentRepository.findAll();
+    }
+
+    public Optional<Document> findById(Long id) {
+        return documentRepository.findById(id);
+    }
+
+    public Document save(Document document) {
+        return documentRepository.save(document);
+    }
+
+    public void deleteById(Long id) {
+        documentRepository.deleteById(id);
+    }
+
+    public List<Document> getExpiringDocuments() {
+        LocalDate now = LocalDate.now();
+        return Arrays.stream(DocumentType.values())
+                .flatMap(type -> {
+                    LocalDate expirationDate = now.plusDays(type.getWarningDays());
+                    return documentRepository.findExpiringDocumentsByDate(expirationDate)
+                            .stream()
+                            .filter(doc -> doc.getType() == type);
+                })
+                .collect(Collectors.toList());
+    }
+}

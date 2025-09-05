@@ -10,12 +10,10 @@
 <div class="card shadow p-4" style="width: 350px;">
     <h3 class="card-title mb-3 text-center">DocManager</h3>
 
-    <!-- Ошибка авторизации -->
     <div th:if="${param.error}" class="alert alert-danger" role="alert">
         Неверное имя пользователя или пароль
     </div>
 
-    <!-- Успешный выход -->
     <div th:if="${param.logout}" class="alert alert-success" role="alert">
         Вы успешно вышли
     </div>

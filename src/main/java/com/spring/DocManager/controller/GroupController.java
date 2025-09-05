@@ -53,13 +53,7 @@ public class GroupController {
         }
         try {
             if (group.getId() != null) {
-                Group existingGroup = groupService.findById(group.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Группа не найдена"));
-
-                existingGroup.setName(group.getName());
-                existingGroup.setColor(group.getColor());
-
-                groupService.save(existingGroup);
+                groupService.updateGroup(group);
                 redirectAttributes.addFlashAttribute("successMessage", "Группа успешно обновлена");
             } else {
                 groupService.save(group);

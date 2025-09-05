@@ -30,13 +30,11 @@
         <td th:text="${doc.issueDate}"></td>
         <td th:text="${doc.expirationDate}"></td>
 
-        <!-- Квадрат с цветом группы -->
         <td>
             <span th:style="'display:inline-block;width:20px;height:20px;border:1px solid #000;background-color:' + ${doc.group.color}"></span>
             <span th:text="${doc.group.name}" class="ms-1"></span>
         </td>
 
-        <!-- Статус с уведомлением -->
         <td>
                     <span th:with="daysLeft=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), doc.expirationDate)}">
                         <span th:if="${daysLeft < 0}" class="text-danger fw-bold">&#9888; Срок истёк!</span>

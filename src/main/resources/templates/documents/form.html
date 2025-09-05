@@ -6,7 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="p-3">
-<h2 th:text="${document.id} != null ? 'Редактировать документ' : 'Создать документ'"></h2>
+
+<h2 th:text="${document.id != null} ? 'Редактировать документ' : 'Создать документ'"></h2>
 
 <form th:object="${document}" th:action="@{/documents}" method="post" class="mb-3">
 
@@ -28,13 +29,17 @@
 
     <div class="mb-2">
         <label class="form-label">Дата выдачи</label>
-        <input type="date" th:field="*{issueDate}" class="form-control"/>
+        <input type="text" th:field="*{issueDate}"
+               th:value="${document.issueDate != null} ? ${#temporals.format(document.issueDate, 'dd.MM.yyyy')} : ''"
+               class="form-control" placeholder="дд.мм.гггг"/>
         <span th:errors="*{issueDate}" class="text-danger"></span>
     </div>
 
     <div class="mb-2">
         <label class="form-label">Дата окончания</label>
-        <input type="date" th:field="*{expirationDate}" class="form-control"/>
+        <input type="text" th:field="*{expirationDate}"
+               th:value="${document.expirationDate != null} ? ${#temporals.format(document.expirationDate, 'dd.MM.yyyy')} : ''"
+               class="form-control" placeholder="дд.мм.гггг"/>
         <span th:errors="*{expirationDate}" class="text-danger"></span>
     </div>
 
@@ -49,6 +54,7 @@
     <button type="submit" class="btn btn-success">Сохранить</button>
     <a th:href="@{/documents}" class="btn btn-secondary">Назад</a>
 </form>
+
 </body>
 </html>
 

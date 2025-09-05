@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -100,17 +102,29 @@ public class DocumentServiceTest {
     }
 
     @Test
-    void getExpiringDocuments_ShouldReturnEmptyListWhenNoDocuments() {
-        when(documentRepository.findByExpirationDateLessThanEqual(any(LocalDate.class)))
-                .thenReturn(Arrays.asList());
+    void testGetExpiringDocuments() {
+        LocalDate today = LocalDate.of(2025, 9, 5);
 
-        List<Document> result = documentService.getExpiringDocuments();
+        when(documentRepository.findExpiringDocuments(
+                today.plusDays(14),
+                today.plusDays(30),
+                today.plusDays(2)))
+                .thenReturn(Arrays.asList(document1, document2));
 
-        assertTrue(result.isEmpty());
-        verify(documentRepository, times(4)).findByExpirationDateLessThanEqual(any(LocalDate.class));
+        try (MockedStatic<LocalDate> mockedDate = Mockito.mockStatic(LocalDate.class)) {
+            mockedDate.when(LocalDate::now).thenReturn(today);
+
+            List<Document> result = documentService.getExpiringDocuments();
+
+            assertEquals(2, result.size());
+            assertTrue(result.contains(document1));
+            assertTrue(result.contains(document2));
+            verify(documentRepository, times(1))
+                    .findExpiringDocuments(today.plusDays(14), today.plusDays(30), today.plusDays(2));
+        }
     }
 
-    @Test
+@Test
     void testUpdateDocument_WhenExists() {
         when(documentRepository.findById(1L)).thenReturn(Optional.of(document1));
         when(documentRepository.save(document1)).thenReturn(document1);

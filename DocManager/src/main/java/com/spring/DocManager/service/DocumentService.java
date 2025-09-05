@@ -35,14 +35,11 @@ public class DocumentService {
 
     public List<Document> getExpiringDocuments() {
         LocalDate now = LocalDate.now();
-        return Arrays.stream(DocumentType.values())
-                .flatMap(type -> {
-                    LocalDate expirationDate = now.plusDays(type.getWarningDays());
-                    return documentRepository.findByExpirationDateLessThanEqual(expirationDate)
-                            .stream()
-                            .filter(doc -> doc.getType() == type);
-                })
-                .collect(Collectors.toList());
+        return documentRepository.findExpiringDocuments(
+                now.plusDays(14),
+                now.plusDays(30),
+                now.plusDays(2)
+        );
     }
 
     public void updateDocument(Document document) {

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Форма документа</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-3">
+<h2 th:text="${document.id} != null ? 'Редактировать документ' : 'Создать документ'"></h2>
+
+<form th:object="${document}" th:action="@{/documents}" method="post" class="mb-3">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="mb-2">
+        <label class="form-label">Название</label>
+        <input type="text" th:field="*{name}" class="form-control"/>
+        <span th:errors="*{name}" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Тип</label>
+        <select th:field="*{type}" class="form-select">
+            <option th:each="type : ${types}" th:value="${type}" th:text="${type.displayName}"></option>
+        </select>
+        <span th:errors="*{type}" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Дата выдачи</label>
+        <input type="date" th:field="*{issueDate}" class="form-control"/>
+        <span th:errors="*{issueDate}" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Дата окончания</label>
+        <input type="date" th:field="*{expirationDate}" class="form-control"/>
+        <span th:errors="*{expirationDate}" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Группа</label>
+        <select th:field="*{group.id}" class="form-select">
+            <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"></option>
+        </select>
+        <span th:errors="*{group}" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    <a th:href="@{/documents}" class="btn btn-secondary">Назад</a>
+</form>
+</body>
+</html>
+
+
+
+

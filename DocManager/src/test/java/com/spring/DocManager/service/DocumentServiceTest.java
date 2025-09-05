@@ -85,7 +85,6 @@ public class DocumentServiceTest {
 
     @Test
     void testSaveDocument() {
-        // Arrange
         when(documentRepository.save(document1)).thenReturn(document1);
 
         Document result = documentService.save(document1);

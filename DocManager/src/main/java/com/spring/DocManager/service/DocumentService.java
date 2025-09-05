@@ -38,7 +38,7 @@ public class DocumentService {
         return Arrays.stream(DocumentType.values())
                 .flatMap(type -> {
                     LocalDate expirationDate = now.plusDays(type.getWarningDays());
-                    return documentRepository.findExpiringDocumentsByDate(expirationDate)
+                    return documentRepository.findByExpirationDateLessThanEqual(expirationDate)
                             .stream()
                             .filter(doc -> doc.getType() == type);
                 })

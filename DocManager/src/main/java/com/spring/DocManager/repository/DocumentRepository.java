@@ -8,6 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DocumentRepository extends JpaRepository <Document, Long> {
-    @Query("SELECT d FROM Document d WHERE d.expirationDate <= :expirationDate")
-    List<Document> findExpiringDocumentsByDate(LocalDate expirationDate);
+
+    List<Document> findByExpirationDateLessThanEqual(LocalDate expirationDate);
 }

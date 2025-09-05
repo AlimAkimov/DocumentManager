@@ -28,4 +28,13 @@ public class GroupService {
     public void deleteById(Long id) {
         groupRepository.deleteById(id);
     }
+
+    public void updateGroup(Group group) {
+        Group existingGroup = findById(group.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Группа не найдена"));
+        existingGroup.setName(group.getName());
+        existingGroup.setColor(group.getColor());
+
+        save(existingGroup);
+    }
 }

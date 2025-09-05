@@ -63,16 +63,7 @@ public class DocumentController {
         }
         try {
             if (document.getId() != null) {
-                Document existingDocument = documentService.findById(document.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Документ не найден"));
-
-                existingDocument.setName(document.getName());
-                existingDocument.setType(document.getType());
-                existingDocument.setIssueDate(document.getIssueDate());
-                existingDocument.setExpirationDate(document.getExpirationDate());
-                existingDocument.setGroup(document.getGroup());
-
-                documentService.save(existingDocument);
+                documentService.updateDocument(document);
                 redirectAttributes.addFlashAttribute("successMessage", "Документ успешно обновлен");
             } else {
                 documentService.save(document);

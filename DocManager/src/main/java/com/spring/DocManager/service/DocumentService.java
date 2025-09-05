@@ -44,4 +44,16 @@ public class DocumentService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public void updateDocument(Document document) {
+        Document existingDocument = findById(document.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Документ не найден"));
+        existingDocument.setName(document.getName());
+        existingDocument.setType(document.getType());
+        existingDocument.setIssueDate(document.getIssueDate());
+        existingDocument.setExpirationDate(document.getExpirationDate());
+        existingDocument.setGroup(document.getGroup());
+
+        save(existingDocument);
+    }
 }

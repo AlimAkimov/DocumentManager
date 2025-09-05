@@ -2,11 +2,13 @@ package com.spring.DocManager.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "groups")
-@Data
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

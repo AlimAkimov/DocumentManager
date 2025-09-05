@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Форма документа</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body class="p-3">
 
@@ -30,16 +31,16 @@
     <div class="mb-2">
         <label class="form-label">Дата выдачи</label>
         <input type="text" th:field="*{issueDate}"
-               th:value="${document.issueDate != null} ? ${#temporals.format(document.issueDate, 'dd.MM.yyyy')} : ''"
-               class="form-control" placeholder="дд.мм.гггг"/>
+               th:value="${document.issueDate != null} ? ${#temporals.format(document.issueDate,'dd.MM.yyyy')} : ''"
+               class="form-control date-input"/>
         <span th:errors="*{issueDate}" class="text-danger"></span>
     </div>
 
     <div class="mb-2">
         <label class="form-label">Дата окончания</label>
         <input type="text" th:field="*{expirationDate}"
-               th:value="${document.expirationDate != null} ? ${#temporals.format(document.expirationDate, 'dd.MM.yyyy')} : ''"
-               class="form-control" placeholder="дд.мм.гггг"/>
+               th:value="${document.expirationDate != null} ? ${#temporals.format(document.expirationDate,'dd.MM.yyyy')} : ''"
+               class="form-control date-input"/>
         <span th:errors="*{expirationDate}" class="text-danger"></span>
     </div>
 
@@ -55,9 +56,16 @@
     <a th:href="@{/documents}" class="btn btn-secondary">Назад</a>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr(".date-input", {
+            dateFormat: "d.m.Y", // формат dd.MM.yyyy
+            allowInput: true,    // пользователь может редактировать вручную
+            altInput: false
+        });
+    });
+</script>
+
 </body>
 </html>
-
-
-
-

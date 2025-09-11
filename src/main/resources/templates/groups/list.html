@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Список групп</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<head th:replace="~{layout :: head('Список групп')}"></head>
 <body class="p-3">
+<div th:replace="~{layout :: header}"></div>
+
 <h2>Группы</h2>
 <a th:href="@{/groups/new}" class="btn btn-primary mb-2">Создать новую группу</a>
 
@@ -19,25 +17,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="group : ${groups}">
+    <tr th:each="group : ${groups}" th:if="${group != null}">
         <td th:text="${group.id}"></td>
         <td th:text="${group.name}"></td>
-
         <td>
             <span th:style="'display:inline-block;width:20px;height:20px;border:1px solid #000;background-color:' + ${group.color}"></span>
         </td>
-
         <td>
             <a th:href="@{/groups/edit/{id}(id=${group.id})}" class="btn btn-sm btn-warning">Редактировать</a>
             <a th:href="@{/groups/delete/{id}(id=${group.id})}" class="btn btn-sm btn-danger">Удалить</a>
         </td>
     </tr>
+    <tr th:if="${#lists.isEmpty(groups)}">
+        <td colspan="4">Группы отсутствуют</td>
+    </tr>
     </tbody>
 </table>
 
-<a th:href="@{/documents}" class="btn btn-secondary">К документам</a>
-<a th:href="@{/report}" class="btn btn-info">Отчет</a>
+<div th:replace="~{layout :: footer}"></div>
 </body>
 </html>
-
-

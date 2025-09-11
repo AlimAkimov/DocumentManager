@@ -3,6 +3,7 @@ package com.spring.DocManager.service;
 import com.spring.DocManager.model.Document;
 import com.spring.DocManager.model.DocumentType;
 import com.spring.DocManager.repository.DocumentRepository;
+import com.spring.DocManager.repository.DocumentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private DocumentTypeRepository documentTypeRepository;
 
     public List<Document> findAll() {
         return documentRepository.findAll();
@@ -35,11 +39,16 @@ public class DocumentService {
 
     public List<Document> getExpiringDocuments() {
         LocalDate now = LocalDate.now();
-        return documentRepository.findExpiringDocuments(
-                now.plusDays(14),
-                now.plusDays(30),
-                now.plusDays(2)
-        );
+        List<DocumentType> types = documentTypeRepository.findAll();
+
+        return types.stream()
+                .flatMap(type -> {
+                    LocalDate expirationDate = now.plusDays(type.getWarningDays());
+                    return documentRepository.findByExpirationDateLessThanEqual(expirationDate)
+                            .stream()
+                            .filter(doc -> doc.getType().getId().equals(type.getId()));
+                })
+                .collect(Collectors.toList());
     }
 
     public void updateDocument(Document document) {

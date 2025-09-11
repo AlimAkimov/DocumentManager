@@ -1,16 +1,35 @@
 package com.spring.DocManager.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
-public enum DocumentType {
-    DOCUMENT("Документ", 14),
-    PASSPORT("Паспорт поверки прибора учета", 30),
-    CERTIFICATE("Удостоверение", 14),
-    PASSWORD("Пароль", 2);
+@NoArgsConstructor
+@Entity
+@Table(name = "document_types")
+public class DocumentType {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String displayName;
-    private final int warningDays;
+    @NotBlank
+    @Column(nullable = false)
+    private String name;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String displayName;
+
+    @Positive(message = "Срок предупреждения должен быть больше 0")
+    @Column(name = "warning_days", nullable = false)
+    private int warningDays;
+
+
 }

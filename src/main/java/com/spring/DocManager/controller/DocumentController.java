@@ -1,7 +1,7 @@
 package com.spring.DocManager.controller;
 
 import com.spring.DocManager.model.Document;
-import com.spring.DocManager.model.DocumentType;
+import com.spring.DocManager.repository.DocumentTypeRepository;
 import com.spring.DocManager.service.DocumentService;
 import com.spring.DocManager.service.GroupService;
 import jakarta.validation.Valid;
@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -21,22 +22,23 @@ public class DocumentController {
     private DocumentService documentService;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private DocumentTypeRepository documentTypeRepository;
 
     @GetMapping
     public String listDocuments(Model model) {
         List<Document> documents = documentService.findAll()
                 .stream()
-                .sorted((d1, d2) -> d1.getId().compareTo(d2.getId()))
+                .sorted(Comparator.comparing(Document::getId))
                 .toList();
         model.addAttribute("documents", documents);
         return "documents/list";
     }
 
-
     @GetMapping("/new")
     public String newDocument(Model model) {
         model.addAttribute("document", new Document());
-        model.addAttribute("types", DocumentType.values());
+        model.addAttribute("types", documentTypeRepository.findAll());
         model.addAttribute("groups", groupService.findAll());
         return "documents/form";
     }
@@ -46,7 +48,7 @@ public class DocumentController {
         Document document = documentService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Документ не найден с ID: " + id));
         model.addAttribute("document", document);
-        model.addAttribute("types", DocumentType.values());
+        model.addAttribute("types", documentTypeRepository.findAll());
         model.addAttribute("groups", groupService.findAll());
         return "documents/form";
     }
@@ -57,7 +59,7 @@ public class DocumentController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            model.addAttribute("types", DocumentType.values());
+            model.addAttribute("types", documentTypeRepository.findAll());
             model.addAttribute("groups", groupService.findAll());
             return "documents/form";
         }

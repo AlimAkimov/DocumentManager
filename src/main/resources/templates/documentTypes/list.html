@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Типы документов')}"></head>
+<body class="p-3">
+<div th:replace="~{layout :: header}"></div>
+
+<h2>Типы документов</h2>
+<a th:href="@{/document-types/new}" class="btn btn-primary mb-2">Создать новый тип</a>
+
+<table class="table table-bordered align-middle">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Отображаемое имя</th>
+        <th>Срок предупреждения (дней)</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="type : ${types}">
+        <td th:text="${type.id}"></td>
+        <td th:text="${type.name}"></td>
+        <td th:text="${type.displayName}"></td>
+        <td th:text="${type.warningDays}"></td>
+        <td>
+            <a th:href="@{/document-types/edit/{id}(id=${type.id})}" class="btn btn-sm btn-warning">Редактировать</a>
+            <a th:href="@{/document-types/delete/{id}(id=${type.id})}" class="btn btn-sm btn-danger">Удалить</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:replace="~{layout :: footer}"></div>
+</body>
+</html>

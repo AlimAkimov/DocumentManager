@@ -13,7 +13,7 @@ public class ReportController {
     @Autowired
     private DocumentService documentService;
 
-    @GetMapping
+    @GetMapping("/expiring")
     public String getExpiringDocumentsReport(Model model) {
         model.addAttribute("expiringDocuments", documentService.getExpiringDocuments());
         return "report/expiring";

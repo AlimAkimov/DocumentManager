@@ -53,7 +53,17 @@
     <a th:href="@{/documents}" class="btn btn-secondary">Назад</a>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr(".date-input", {
+            dateFormat: "d.m.Y",
+            allowInput: true,
+            altInput: false
+        });
+    });
+</script>
+
 <div th:replace="~{layout :: footer}"></div>
-<script th:replace="~{layout :: scripts}"></script>
 </body>
 </html>

@@ -2,16 +2,17 @@ package com.spring.DocManager.service;
 
 import com.spring.DocManager.model.Group;
 import com.spring.DocManager.repository.GroupRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GroupService {
-    @Autowired
-    private GroupRepository groupRepository;
+
+    private final GroupRepository groupRepository;
 
     public List<Group> findAll() {
         return groupRepository.findAll();

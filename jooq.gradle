@@ -1,0 +1,97 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.postgresql:postgresql:42.7.4"
+        classpath "org.testcontainers:postgresql:1.20.2"
+    }
+    ext {
+        jooqVersion = '3.19.25'
+    }
+}
+
+// Загрузка свойств из файла application.properties
+def props = new Properties()
+file('src/main/resources/application.properties').withInputStream { stream ->
+    props.load(stream)
+}
+
+import org.testcontainers.containers.PostgreSQLContainer
+
+tasks.register("tc-start") {
+    doLast {
+        def db = new PostgreSQLContainer("postgres:16.4")
+                .withUsername("postgres")
+                .withDatabaseName("postgres")
+                .withPassword("password")
+        db.start()
+
+        // Установка свойств для jOOQ
+        System.setProperty("jooq.codegen.jdbc.url", props.getProperty('spring.datasource.url'))
+        System.setProperty("jooq.codegen.jdbc.username", props.getProperty('spring.datasource.username'))
+        System.setProperty("jooq.codegen.jdbc.password", props.getProperty('spring.datasource.password'))
+        System.setProperty("testcontainer.containerid", db.getContainerId())
+        System.setProperty("testcontainer.imageName", db.getDockerImageName())
+
+        Class.forName("org.postgresql.Driver")
+
+        // Обновление задачи Liquibase с использованием свойств
+        tasks.register("runLiquibaseMigrations", Exec) {
+            dependsOn compileJava
+            commandLine 'liquibase',
+                    '--url=' + props.getProperty('spring.datasource.url'),
+                    '--username=' + props.getProperty('spring.datasource.username'),
+                    '--password=' + props.getProperty('spring.datasource.password'),
+                    '--changeLogFile=liquibase/changelog-master.yml',
+                    'update'
+        }
+    }
+}
+
+tasks.register("tc-stop") {
+    doLast {
+        def containerId = System.getProperty("testcontainer.containerid")
+        def imageName = System.getProperty("testcontainer.imageName")
+
+        println("Stopping testcontainer $containerId - $imageName")
+        org.testcontainers.utility.ResourceReaper
+                .instance()
+                .stopAndRemoveContainer(containerId, imageName)
+    }
+}
+
+jooq {
+    configuration {
+        generator {
+            name = "org.jooq.codegen.JavaGenerator"
+            database {
+                name = "org.jooq.meta.postgres.PostgresDatabase"
+                includes = ".*"
+                inputSchema = 'public'
+            }
+            generate {
+                deprecated = false
+                records = true
+                immutablePojos = true
+                fluentSetters = true
+                daos = true
+                pojos = true
+                springAnnotations = true
+            }
+            target {
+                packageName = 'nu.studer.sample'
+                directory = 'build/generated-src/jooq/main'
+            }
+        }
+    }
+}
+
+tasks.named("jooqCodegen") {
+    dependsOn("tc-start")
+    finalizedBy("tc-stop")
+}
+
+tasks.named("compileJava") {
+    dependsOn("jooqCodegen")
+}

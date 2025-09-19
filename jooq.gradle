@@ -69,6 +69,7 @@ jooq {
                 name = "org.jooq.meta.postgres.PostgresDatabase"
                 includes = ".*"
                 inputSchema = 'public'
+                excludes = 'databasechangelog|databasechangeloglock'
             }
             generate {
                 deprecated = false

@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.Objects;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -45,8 +47,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         var admin = User.builder()
-                .username(env.getProperty("spring.security.user.name", "admin"))
-                .password(passwordEncoder.encode(env.getProperty("spring.security.user.password", "admin")))
+                .username(Objects.requireNonNull(env.getProperty("spring.security.user.name")))
+                .password(passwordEncoder.encode(env.getProperty("spring.security.user.password")))
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);

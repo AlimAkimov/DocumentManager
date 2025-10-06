@@ -20,6 +20,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -34,10 +35,10 @@ public class AppConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName(env.getProperty("spring.datasource.driver-class-name", "org.postgresql.Driver"));
-        ds.setUrl(env.getProperty("spring.datasource.url", "jdbc:postgresql://localhost:5432/DocumentManager"));
-        ds.setUsername(env.getProperty("spring.datasource.username", "DocumentManagerOwner"));
-        ds.setPassword(env.getProperty("spring.datasource.password", "898989"));
+        ds.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
+        ds.setUrl(env.getProperty("spring.datasource.url"));
+        ds.setUsername(env.getProperty("spring.datasource.username"));
+        ds.setPassword(env.getProperty("spring.datasource.password"));
         return ds;
     }
 
@@ -48,9 +49,9 @@ public class AppConfig {
         emf.setPackagesToScan("com.spring.DocManager.model");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         Properties props = new Properties();
-        props.setProperty("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect"));
-        props.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto", "none"));
-        props.setProperty("hibernate.show_sql", env.getProperty("spring.jpa.show-sql", "true"));
+        props.setProperty("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect"));
+        props.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
+        props.setProperty("hibernate.show_sql", env.getProperty("spring.jpa.show-sql"));
         emf.setJpaProperties(props);
         return emf;
     }
@@ -64,7 +65,7 @@ public class AppConfig {
     public DSLContext dslContext(DataSource dataSource) {
         DefaultConfiguration config = new DefaultConfiguration();
         config.set(new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource)));
-        config.set(SQLDialect.valueOf(env.getProperty("spring.jooq.sql-dialect", "POSTGRES")));
+        config.set(SQLDialect.valueOf(env.getProperty("spring.jooq.sql-dialect")));
         return new DefaultDSLContext(config);
     }
 
@@ -72,8 +73,8 @@ public class AppConfig {
     public SpringLiquibase liquibase() {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource());
-        liquibase.setChangeLog(env.getProperty("spring.liquibase.change-log", "classpath:liquibase/changelog-master.yml"));
-        liquibase.setShouldRun(Boolean.parseBoolean(env.getProperty("spring.liquibase.enabled", "true")));
+        liquibase.setChangeLog(env.getProperty("spring.liquibase.change-log"));
+        liquibase.setShouldRun(Boolean.parseBoolean(env.getProperty("spring.liquibase.enabled")));
         return liquibase;
     }
 }
